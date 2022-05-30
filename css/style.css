@@ -1,0 +1,28 @@
+:root {
+    --cell-size: 50px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+main {
+    background-color: #7CFFD2;
+    height: calc(100vh -  82px - 56px);
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid black;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell-clicked {
+    background-color: #6495F1;
+    color: white;
+}
