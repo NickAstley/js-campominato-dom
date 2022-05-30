@@ -15,14 +15,21 @@ con difficoltà 3 => tra 1 e 49
 al click con il tasto destro su una cella, inseriamo il flag per indicare che la cella potrebbe avere una bomba
 Il computer deve generare 16 numeri casuali - cioè le bombe - compresi nello stesso range della difficoltà prescelta. */
 
+// Creo una variabile per tenere traccia del punteggio dell'utente
+let userScore = 0;
+// Creo una variabile che mi servirà a sapere se la partita è finita
+let gameOver = false;
+
 // Prendo il bottone di input della difficoltà
 const submitButton = document.getElementById("submitButton");
 
 // Aggiungo un EventListener al bottone per resettare la partita e cambiare la difficoltà
 submitButton.addEventListener("click", function() {
+    // Resetto punteggio e progresso della partita
+    userScore = 0;
+    gameOver = false;
     // Prendo il valore del select
     const selectedDifficulty = document.getElementById("difficultySelector").value;
-
     if (selectedDifficulty === "easy") {
         // Se è stata scelta la difficoltà facile, creo una griglia 10*10
         createGrid(10, 10);
@@ -38,53 +45,63 @@ submitButton.addEventListener("click", function() {
 function createGrid(rows, cols) {
     // Prendo il container dove inserirò le celle
     const gridContainer = document.querySelector(".grid-container");
-
     // Svuoto il container
     gridContainer.innerHTML = "";
-
     // Assegno al container una larghezza in base al numero di colonne
     gridContainer.style.width = `calc(var(--cell-size) * ${cols})`;
-
     // Calcolo il numero totale di celle
     const cellsTotal = rows * cols;
-
+    // Creo la lista delle bombe
+    const bombsList = createBombsList(cellsTotal);    
     // Creo ogni cella usando un ciclo
     for (let i = 1; i <= cellsTotal; i++) {
         // Aggiungo la cella al container
-        gridContainer.append(createCell(i));
+        gridContainer.append(createCell(i, bombsList));
     }
-
-    // Creo la lista delle bombe
-    createBombsList(cellsTotal);    
-}
-
-function createCell(counter) {
-    // Creo la cella
-    const cell = document.createElement("div");
-    // Le fornisco una classe
-    cell.classList.add("cell");
-    // Aggiungo il numero nascosto che ne identifica la posizione e determina se è una bomba
-    cell.dataset.indice = counter;
-    // Le aggiungo un EventListener che la colora al click
-    cell.addEventListener("click", onCellClick);
-    // Ritorno la cella
-    return cell;
 }
 
 function createBombsList (cellsTotal) {
     // Creo un array che conterrà la posizione delle bombe
     const bombsList = [];
-
     // L'array dovrà contenere 16 posizioni uniche
     while (bombsList.length < 16) {
         const randomBombNumber = Math.floor(Math.random() * cellsTotal + 1);
+        // Se il numero generato non è presente nell'array, lo pusho
         if (!bombsList.includes(randomBombNumber)) {
             bombsList.push(randomBombNumber);
         }
     }
+    // Ritorno la lista delle bombe
+    return bombsList;
 }
 
-function onCellClick() {
-    this.classList.add("cell-clicked");
+function createCell(counter, bombsList) {
+    // Creo la cella
+    const cell = document.createElement("div");
+    // Le fornisco una classe
+    cell.classList.add("cell");
+    // Aggiungo il numero che ne identifica la posizione e determina se è una bomba
+    cell.innerHTML = `<span>${counter}</span>`;
+    cell.dataset.index = counter;
+    // Le aggiungo un EventListener che la colora al click
+    addOnCellClick(cell, bombsList);
+    // Ritorno la cella
+    return cell;
+}
+
+function addOnCellClick(cell, bombsList) {
+    cell.addEventListener("click", function () {
+        if (gameOver) {
+            return;
+        }
+        if (bombsList.includes(+this.dataset.index)){
+            this.classList.add("bomb");
+            gameOver = true;
+            alert("Hai perso! Punteggio:" + userScore);
+        } else {
+            this.classList.add("safe");
+            userScore++;
+        }
+    });
 }
 

@@ -22,7 +22,12 @@ main {
     align-items: center;
 }
 
-.cell-clicked {
+.safe {
     background-color: #6495F1;
+    color: white;
+}
+
+.bomb {
+    background-color: #DD0C39;
     color: white;
 }
