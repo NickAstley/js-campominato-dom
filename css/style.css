@@ -31,3 +31,9 @@ main {
     background-color: #DD0C39;
     color: white;
 }
+
+.danger {
+    background-color: #ffdb0d;
+    color: white;
+    border-color: #DD0C39;
+}
